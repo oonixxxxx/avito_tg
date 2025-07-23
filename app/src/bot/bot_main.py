@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher
 
-from src.bot.handlers import start, help
+from src.bot.handlers import start, help, catalog, my_items
 from src.bot.config import BOT_TOKEN
 
 async def main():
@@ -12,6 +12,8 @@ async def main():
         dp.include_routers(
             start.router,
             help.router,
+            catalog.router,
+            my_items.router
         )
 
         # Запуск бота
