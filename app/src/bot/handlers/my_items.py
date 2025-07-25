@@ -15,3 +15,5 @@ async def cmd_my_items(message: types.Message):
     except Exception as e:
         print(f"Ошибка в обработчике start: {e}")
         return 0
+    
+#90121792

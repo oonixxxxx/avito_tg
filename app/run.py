@@ -1,4 +1,5 @@
 import asyncio
+
 from src.bot.bot_main import main
 
 if __name__ == "__main__":
