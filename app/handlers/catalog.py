@@ -1,12 +1,11 @@
-from aiogram import types, F
+from aiogram import types, F, Router
 from aiogram.filters import Command
-import sqlite3
-from aiogram import Router, types
-from aiogram.filters import Command
-import sqlite3
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+import sqlite3
 
-router = Router(name="start-router")
+from app.keyboard.catalog_keyboard import new_keyboard, update_keyboard
+
+router = Router(name="catalog-router")
 
 # Вспомогательные функции для работы с БД
 def get_total_products():
@@ -35,14 +34,7 @@ async def cmd_catalog(message: types.Message):
         return
         
     # Создаем клавиатуру для навигации
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="⬅️", callback_data="catalog_prev_0"),
-            InlineKeyboardButton(text="1/{}".format(total_products), 
-                                callback_data="current_position"),
-            InlineKeyboardButton(text="➡️", callback_data="catalog_next_0")
-        ]
-    ])
+    keyboard = new_keyboard #из модуля с класиватурами
     
     # Получаем первый товар
     product = get_product_by_index(0)
@@ -84,6 +76,7 @@ async def catalog_callback_handler(callback: types.CallbackQuery):
     description, photo_file_id = product
     
     # Обновляем клавиатуру
+    
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="⬅️", callback_data=f"catalog_prev_{new_index}"),

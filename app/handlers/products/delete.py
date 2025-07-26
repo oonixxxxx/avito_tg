@@ -1,15 +1,15 @@
-import logging
-from aiogram import Bot, Dispatcher, types, F
+from aiogram import types, F, Router
 from aiogram.filters import Command
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import sqlite3
 import asyncio
-import re
+
+from app.handlers.tgk.publish_to_channel import publish_to_channel
+from app.config import ADMIN_ID, CHANNEL_ID, BOT_TOKEN
+
+router = Router(name="search-router")
 
 # Удаление товара
-@dp.callback_query(F.data.startswith("delete_"))
+@router.callback_query(F.data.startswith("delete_"))
 async def delete_product_handler(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     product_id = int(callback.data.split("_")[1])
@@ -42,20 +42,20 @@ async def delete_product_handler(callback: types.CallbackQuery):
             try:
                 await bot.delete_message(chat_id=CHANNEL_ID, message_id=message_id)
             except Exception as e:
-                logger.error(f"Ошибка удаления сообщения из канала: {e}")
+                print(f"Ошибка удаления сообщения из канала: {e}")
         
         await callback.answer("✅ Товар удален")
         await callback.message.edit_caption(caption=f"❌ Товар удален\nID: {product_id}")
         
     except Exception as e:
-        logger.error(f"Ошибка удаления товара: {e}")
+        print(f"Ошибка удаления товара: {e}")
         await callback.answer("❌ Ошибка при удалении товара")
     
     finally:
         conn.close()
 
 # Команда для администратора - синхронизация канала
-@dp.message(Command("sync_channel"))
+@router.message(Command("sync_channel"))
 async def cmd_sync_channel(message: types.Message):
     if message.from_user.id != ADMIN_ID:
         await message.answer("❌ Эта команда только для администратора")
@@ -98,7 +98,7 @@ async def cmd_sync_channel(message: types.Message):
                 
             await asyncio.sleep(1)  # Задержка чтобы не перегружать API
         except Exception as e:
-            logger.error(f"Ошибка синхронизации товара {product_id}: {e}")
+            print(f"Ошибка синхронизации товара {product_id}: {e}")
             errors += 1
     
     await message.answer(f"✅ Синхронизация завершена\n"

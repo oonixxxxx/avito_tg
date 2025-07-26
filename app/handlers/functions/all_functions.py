@@ -1,3 +1,23 @@
+import sqlite3
+
+# Вспомогательные функции для работы с БД
+def get_total_products():
+    conn = sqlite3.connect('shop.db')
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM products")
+    total = c.fetchone()[0]
+    conn.close()
+    return total
+
+def get_product_by_index(index):
+    conn = sqlite3.connect('shop.db')
+    c = conn.cursor()
+    c.execute("SELECT description, photo_file_id FROM products ORDER BY product_id LIMIT 1 OFFSET ?", (index,))
+    product = c.fetchone()
+    conn.close()
+    return product
+
+#Функция поиска товара
 def search_products(query):
     conn = sqlite3.connect('shop.db')
     c = conn.cursor()
@@ -15,6 +35,7 @@ def search_products(query):
     conn.close()
     return results
 
+#получаем продукт по id
 def get_product_by_id(product_id):
     conn = sqlite3.connect('shop.db')
     c = conn.cursor()
@@ -23,23 +44,10 @@ def get_product_by_id(product_id):
     conn.close()
     return product
 
+#обновляем
 def update_published_message(product_id, message_id):
     conn = sqlite3.connect('shop.db')
     c = conn.cursor()
     c.execute("UPDATE products SET published_message_id = ? WHERE product_id = ?", (message_id, product_id))
     conn.commit()
     conn.close()
-
-# Публикация товара в канале
-async def publish_to_channel(product_id, description, photo_file_id):
-    try:
-        message = await bot.send_photo(
-            chat_id=CHANNEL_ID,
-            photo=photo_file_id,
-            caption=f"🆕 Новый товар!\n\n{description}\n\nID: {product_id}"
-        )
-        update_published_message(product_id, message.message_id)
-        return message.message_id
-    except Exception as e:
-        logger.error(f"Ошибка публикации в канал: {e}")
-        return None

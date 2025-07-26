@@ -1,12 +1,8 @@
-from aiogram import types, F
+from aiogram import types, Router
 from aiogram.filters import Command
 import sqlite3
-from aiogram import Router, types
-from aiogram.filters import Command
-import sqlite3
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-router = Router(name="start-router")
+router = Router(name="my-products-router")
 
 # Обработчик команды /my_products
 @router.message(Command("my_products"))

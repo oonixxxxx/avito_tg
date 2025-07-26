@@ -4,7 +4,7 @@ import sqlite3
 
 from app.config import admin_id
 
-router = Router(name="help-router")
+router = Router(name="helper-router")
 
 # Обработчик команды /help
 @router.message(Command("help"))

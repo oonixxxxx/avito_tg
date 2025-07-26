@@ -1,16 +1,13 @@
-from aiogram import types, F
+from aiogram import types, F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 import sqlite3
-from aiogram import Router, types
-from aiogram.filters import Command
-import sqlite3
 
-router = Router(name="start-router")
+router = Router(name="add-router")
 
 
-# Создаем состояния для FSM
+# Создаем обьект состояния для FSM
 class AddProduct(StatesGroup):
     waiting_description = State()
     waiting_photo = State()
@@ -19,7 +16,7 @@ class AddProduct(StatesGroup):
 @router.message(Command("add"))
 async def cmd_add(message: types.Message, state: FSMContext):
     await state.set_state(AddProduct.waiting_description)
-    await message.answer("✍️ Введите описание товара:")
+    await message.answer("✍️ Введите описание товара и цену на товар:")
 
 # Обработчик текста (описание товара)
 @router.message(AddProduct.waiting_description)

@@ -1,22 +1,24 @@
-from aiogram import types, F
+from aiogram import types, F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram import Router
+import re
 
-router = Router(name="start-router")
+from app.handlers.functions.all_functions import search_products, get_product_by_id
+
+router = Router(name="search-router")
 
 class SearchProduct(StatesGroup):
     waiting_query = State()
 
 # Обработчик команды /search
-@dp.message(Command("search"))
+@router.message(Command("search"))
 async def cmd_search(message: types.Message, state: FSMContext):
     await state.set_state(SearchProduct.waiting_query)
     await message.answer("🔍 Введите поисковый запрос:")
 
 # Обработчик поискового запроса
-@dp.message(SearchProduct.waiting_query)
+@router.message(SearchProduct.waiting_query)
 async def process_search_query(message: types.Message, state: FSMContext):
     query = message.text.strip()
     if len(query) < 2:
@@ -46,7 +48,7 @@ async def process_search_query(message: types.Message, state: FSMContext):
     await state.clear()
 
 # Поиск похожих товаров
-@dp.callback_query(F.data.startswith("similar_"))
+@router.callback_query(F.data.startswith("similar_"))
 async def similar_products_handler(callback: types.CallbackQuery):
     product_id = int(callback.data.split("_")[1])
     product = get_product_by_id(product_id)
