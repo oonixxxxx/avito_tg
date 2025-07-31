@@ -1,3 +1,3 @@
-BOT_TOKEN = '5604939723:AAEtdwh-f5ELyGMQer85zwd4lirv54M-Wu4'
-ADMIN_ID=''
-CHANNEL_ID = ''
+BOT_TOKEN = 'your-bot-token'
+ADMIN_ID='admin-id'
+CHANNEL_ID = 'channel-id'
